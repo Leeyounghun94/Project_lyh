@@ -1,2 +1,2 @@
-# Project_lyh
-Project_lyh
+# JAVA_Team1Project
+팀프로젝트1
