@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.show.DAO.MemberDAO;
 import com.show.DAO.ReviewDAO;
 import com.show.DTO.MemberDTO;
 import com.show.DTO.ReviewDTO;
@@ -93,31 +94,37 @@ public class ReviewSV {
    }
    
    
-   private static void rdelete(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
+    public static void rdelete(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
       // - 리뷰 삭제하기
       
       
       System.out.println("삭제할 리뷰 번호를 입력 해주세요.");
       System.out.print(">>>");
-      int dno = s.nextInt();
+      int delNo = s.nextInt();
       
       System.out.println("본인 확인을 위해 닉네임을 입력해 주세요");
       System.out.print(">>>");
-      String delid = s.next();
+      String delId = s.next();
       
-      ReviewDTO box2 = new ReviewDTO();
-      box2.setRno(dno);
-      box2.setNickName(delid);
+      // 로그인 스테이트 - 닉네임 동일 확인 후 삭제 기능 추가
       
       
+      ReviewDTO rdelete = new ReviewDTO();
+      rdelete.setRno(delNo);
+      rdelete.setNickName(delId);
+      
+      ReviewDAO review = new ReviewDAO();
+      review.rdelete(connection, loginState, rdelete);
+      
+      
+      
+      
+      System.out.println(" 정상적으로 삭제가 되었습니다. ");
       
    }
 
 
-
-
-
-   private static void rmodify(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
+   public static void rmodify(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
       // 리뷰 수정 :
 
          System.out.println(" 리뷰 수정할 내용을 입력 하세요");
@@ -126,14 +133,17 @@ public class ReviewSV {
          
          System.out.println("수정할 별점을 1~5점까지 입력해주세요.");
          String star = s.next();
-   
-         ReviewDTO box = new ReviewDTO();
-         box.setReview(con);
-         box.setStarPoint(star);
+       //  별점은 필드를 double로 주는게 어떨까요? 프론트에서 꽉찬별, 반별, 빈별 3종류 할수가 있기 때문에..
          
+         ReviewDTO rmodify = new ReviewDTO();
+         rmodify.setReview(con);
+         rmodify.setStarPoint(star);
+         
+      // 로그인 스테이트 - 닉네임 동일 확인 후 삭제 기능 추가
          
          ReviewDAO review = new ReviewDAO();
-         review.rmodify(connection, loginState, s, sL, box);
+         review.rmodify(connection, loginState, s, sL, rmodify);
+         
          
       
       
@@ -142,7 +152,7 @@ public class ReviewSV {
 
 
 
-   private static void rlist(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
+   public static void rlist(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
       // 리뷰 보기 방식 : 로그인한 정보랑 제목으로 리뷰 보기
       
       
@@ -178,7 +188,7 @@ public class ReviewSV {
 
 
 
-   private static void myReview(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
+   public static void myReview(Scanner sL, Scanner s, Connection connection, MemberDTO loginState) {
       // 내 리뷰 보기 - 1. 내가 작성한 리뷰보기(닉네임으로 조건)
       
       ReviewDAO review = new ReviewDAO();
@@ -204,8 +214,8 @@ public class ReviewSV {
       String review = s.next();
       
     ReviewDTO reviewdto = new ReviewDTO();
-    reviewdto.setStarPoint(별);
-    
+    reviewdto.setStarPoint(review);
+  
     reviewdto.setReview(review);
     
     re.rwriter(connection, reviewdto, loginState);
